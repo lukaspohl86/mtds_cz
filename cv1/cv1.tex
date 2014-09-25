@@ -1,0 +1,688 @@
+\documentclass[12pt,a4paper,czech]{article}
+\usepackage[T1]{fontenc}
+\usepackage[cp1250]{inputenc}
+\usepackage{babel}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{array}
+\usepackage{paralist}
+\usepackage[cm]{fullpage}
+\usepackage{pst-sigsys}
+\usepackage{pst-pad}
+\usepackage{pst-circ}
+\usepackage{pst-plot}
+\usepackage{graphicx}
+%\usepackage{animate}
+\usepackage{pst-light3d}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+%\DeclareFixedFont{\Sf}{T1}{fxb}{b}{n}{2cm}
+
+\usepackage[explicit]{titlesec}
+\definecolor{vut-red}{RGB}{194,14,26}
+\definecolor{fekt-blue}{RGB}{0,95,173}
+\definecolor{titlepagecolor}{cmyk}{1,.60,0,.40}
+\definecolor{namecolor}{cmyk}{1,.50,0,.10}
+
+
+\titleformat{\section}
+{\normalfont\Large\bfseries}{}{0em}{\colorbox{fekt-blue}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{\textcolor{white}{\thesection\quad#1}}}}
+\titleformat{name=\section,numberless}
+{\normalfont\Large\bfseries}{}{0em}{\colorbox{fekt-blue}{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{\textcolor{white}{#1}}}}
+
+
+\newcommand*\pswall[3]{% ll ur lr
+\psframe[linecolor=white,fillstyle=hlines,hatchcolor=black,linewidth=0pt](#1)(#2)% (ll)(ur)
+\psline[linecolor=black](#1)(#3)}
+
+%\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   %{-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   %{2.3ex \@plus.2ex}%
+                                   %{\huge\bfseries\color{blue}}}
+%\renewcommand\subsection{\@startsection {subsection}{2}{\z@}%
+                                   %{-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   %{1.5ex \@plus.2ex}%
+                                   %{\Large\bfseries}}
+
+\title{\textbf{MTDS}\\ Cz 1\\Vnìjší a vnitøní popis dynamických systémù}
+
+\author{}
+\date{}
+
+\begin{document}
+  \maketitle
+
+%\begin{titlepage}
+%\newgeometry{left=7.5cm} %defines the geometry for the titlepage
+%\pagecolor{fekt-blue}
+%\noindent
+%\includegraphics[width=4cm]{logo2}\\[-1em]
+%\color{white}
+%\makebox[0pt][l]{\rule{1.3\textwidth}{1pt}}
+%\par
+%\noindent
+%\textbf{Kybernetika, automatizace a mìøení}
+%\vfill
+%\noindent
+%{\huge \textsf{MTDS}}
+%\vskip\baselineskip
+%\noindent
+%\textsf{Záøí 2014}
+%\end{titlepage}
+%\restoregeometry % restores the geometry
+%\pagecolor{white}% Use this to restore the color pages to white
+		
+		
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%		
+		
+\section*{Laplaceova transformace, Z transformace - opakování}
+
+\begin{table}[htbp]
+  \begin{center}
+
+		\caption{Slovník Laplaceovy a Z transformace}
+    \renewcommand{\arraystretch}{2.00}
+    \begin{tabular}{l|c|c} 
+      {$\bf{f(t)}$} &{\bf p} &{\bf z} \\ % \vspace{-5ex}\\
+      \hline $\delta(t)$ &1 & 1\\
+			$\delta[t - kT]$ & $e^{-kTp}$ & $z^{-k}$ \\
+      $1(t)$ &$\displaystyle\frac{1}{p}$ & $\displaystyle\frac{z}{z - 1}$ \\
+			$t$ & $\displaystyle\frac{1}{p^2}$ & $\displaystyle\frac{Tz}{(z - 1)^2}$ \\
+			$t^2$ & $\displaystyle\frac{2}{p^3}$ & $\displaystyle\frac{T^2z(z+1)}{(z - 1)^3}$ \\
+			$e^{-at}$ & $\displaystyle\frac{1}{p+a}$ & $\displaystyle\frac{z}{z - e^{-aT}}$ \\
+			$1-e^{-at}$ & $\displaystyle\frac{a}{p(p+a)}$ & $\displaystyle\frac{(1-e^{-aT})z}{(z-1)(z - e^{-aT})}$ \\
+			$te^{-at}$ & $\displaystyle\frac{1}{(p+a)^2}$ & $\displaystyle\frac{Tze^{-at}}{(z - e^{-aT})^2}$ \\
+			$t^2e^{-aT}$ & $\displaystyle\frac{2}{(p+a)^3}$ & $\displaystyle\frac{T^2e^{-aT}z(z+e^{-at})}{(z - e^{-aT})^3}$ \\
+			$be^{-bt}-ae^{-at}$ & $\displaystyle\frac{(b-a)p}{(p+a)(p+b)}$ & $\displaystyle\frac{z[z(b-a)-(be^{-aT}-ae^{-bT})]}{(z - e^{-aT})(z - e^{-bT})}$ \\
+			$\mathrm{sin}\omega t$ & $\displaystyle\frac{\omega}{p^2+\omega^2}$ & $\displaystyle\frac{z \mathrm{sin}\omega T}{z^2-2z \mathrm{cos}\omega T + 1}$ \\
+			$\mathrm{cos}\omega t$ & $\displaystyle\frac{p}{p^2+\omega^2}$ & $\displaystyle\frac{z(z-\mathrm{cos}\omega T)}{z^2-2z \mathrm{cos}\omega T + 1}$ \\
+			$e^{-at}\mathrm{sin}\omega t$ & $\displaystyle\frac{\omega}{(p+a)^2+\omega^2}$ & $\displaystyle\frac{ze^{-aT} \mathrm{sin}\omega T}{z^2-2ze^{-aT} \mathrm{cos}\omega T + e^{-aT}}$ \\
+			$e^{-at}\mathrm{cos}\omega t$ & $\displaystyle\frac{p+a}{(p+a)^2+\omega^2}$ & $\displaystyle\frac{z^2-ze^{-aT}\mathrm{cos}\omega T}{z^2-2ze^{-aT} \mathrm{cos}\omega T + e^{-aT}}$ \\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{minipage}[t]{.5\textwidth}
+Pøímá Laplaceova transformace:
+	\begin{equation*}
+		F(p) = \mathcal{L}\{f(t)\} = \int_0^{\infty} f(t) e^{-pt} dt 
+	\end{equation*}
+\end{minipage} \begin{minipage}[t]{.5\textwidth}
+Zpìtná Laplaceova transformace:
+	\begin{equation*}
+		f(t) = \mathcal{L}^{-1}\{F(p)\} = \sum_{i=1}^n \mathop{\mathrm{res}} [F(p) e^{pt}]_{p=p_i}
+	\end{equation*}
+\end{minipage}
+
+\begin{minipage}[t]{.5\textwidth}
+Pøímá Z transformace:
+	\begin{equation*}
+		F(z) = \sum_{k=0}^\infty f(k) z^{-k}
+	\end{equation*}
+\end{minipage} \begin{minipage}[t]{.5\textwidth}
+Zpìtná Z transformace:
+	\begin{equation*}
+		f(k) = Z^{-1}\left\{ F(z)\right\} = \sum_{i=1}^n \mathop{\mathrm{res}} [F(z) z^{k-1}]_{z=z_i}
+	\end{equation*}
+\end{minipage}
+
+Reziduum funkce $F(p) e^{pt}$ v bodì $p = p_i$ mající v $p_i$ pól øádu $m$:
+
+\begin{equation*}
+	\mathop{\mathrm{res}} [F(p) e^{pt}]_{p=p_i} = \frac{1}{(m-1)!} \lim_{p\to p_i} \left(\frac{d}{dp}\right)^{m-1} (F(p) e^{pt}  (p-p_i)^m)
+\end{equation*}
+
+Reziduum funkce $F(z) z^{k-1}$ v bodì $z = z_i$ mající v $z_i$ pól øádu $m$:
+
+\begin{equation*}
+	\mathop{\mathrm{res}} [F(z) z^{k-1}]_{z=z_i} = \frac{1}{(m-1)!} \lim_{z\to z_i} \left(\frac{d}{dz}\right)^{m-1} (F(z) z^{k-1}\cdot  (z-z_i)^m)
+\end{equation*}
+
+Vìty o koneèné a poèáteèní hodnotì:
+\begin{align*}
+	\lim_{t\to \infty} &= \lim_{p\to 0} pY(p)\\
+	\lim_{t\to 0} &= \lim_{p\to \infty} pY(p)\\
+	\lim_{k\to \infty} &= \lim_{z\to 1} (1-z^{-1}) Y(z) \hspace{1cm}\\
+	f(0) &= \lim_{z\to \infty} Y(z)
+\end{align*}
+
+Ostatní vlastnosti Laplaceovy a Z transformace jsou k nalezení v pøednášce \href{https://sites.google.com/site/teoriedynamickychsystemu/prednasky/vnejsipopis.pdf?attredirects=0&d=1}{vnejsipopis.pdf}.\\
+
+\subsection*{Øešené pøíklady}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent 1) $\mathcal{L}^{-1}\left\{\displaystyle\frac{p+1}{p^2(p+2)}\right\}$\\
+
+Øešení:\\
+\begin{multline*}
+	\mathcal{L}^{-1}\left\{\displaystyle\frac{p+1}{p^2(p+2)}\right\} = \mathop{\mathrm{res}}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}\right]_{p=0}+\mathop{\mathrm{res}}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}\right]_{p=-2}\hfill
+\end{multline*}
+\begin{multline*}
+	\mathop{\mathrm{res}}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}\right]_{p=0} = \frac{1}{(2-1)!}\lim_{p\to 0}\left(\frac{d}{dp}\right)^{(2-1)}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}(p-0)^2\right]=\lim_{p\to 0}\left[\displaystyle\frac{(p+1)e^{pt}}{(p+2)}\right]^\prime \hfill\\
+	= \lim_{p\to 0}\frac{[(p+1)e^{pt}]^\prime (p+2)-(p+1)e^{pt}}{(p+2)^2} =\lim_{p\to 0}\frac{[e^{pt}+(p+1)te^{pt}](p+2)-(p+1)e^{pt}}{p^2+4p+4}=\hfill\\
+	= \lim_{p\to 0}\frac{p^2te^{pt}+pe^{pt}-pe^{pt}+pte^{pt}+2pte^{pt}+2te^{pt}+2e^{pt}-e^{pt}}{p^2+4p+4} = \frac{0+0-0+0+0+2t+t-1}{0+0+4}=\hfill\\
+	= \frac{t}{2} + \frac{1}{4}\hfill
+\end{multline*}
+\begin{multline*}
+	\mathop{\mathrm{res}}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}\right]_{p=-2} = \frac{1}{(1-1)!}\lim_{p\to -2}\left(\frac{d}{dp}\right)^{(1-1)}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2(p+2)}(p+2)^1\right]=\lim_{p\to -2}\left[\displaystyle\frac{(p+1)e^{pt}}{p^2}\right]\hfill\\
+	= \frac{pe^{pt}+e^{pt}}{p^2} = \frac{-2e^{-2t}+e^{-2t}}{4} = -\frac{e^{-2t}}{4}\hfill\\
+\end{multline*}
+\begin{multline*}
+	\mathcal{L}^{-1}\left\{\displaystyle\frac{p+1}{p^2(p+2)}\right\} = \underline{\underline{\frac{t}{2} + \frac{1}{4} -\frac{e^{-2t}}{4}}}\hfill
+\end{multline*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent 2) $Z^{-1}\left\{\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}\right\}$\\
+
+Øešení:\\
+\begin{multline*}
+	Z^{-1}\left\{\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}\right\} = \mathop{\mathrm{res}}\left[\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}z^{k-1}\right]_{z=0.2}+\mathop{\mathrm{res}}\left[\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}z^{k-1}\right]_{p=-0.2}\hfill
+\end{multline*}
+\begin{multline*}
+	\mathop{\mathrm{res}}\left[\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}z^{k-1}\right]_{z=0.2} = \frac{1}{(2-1)!} \lim_{z\to 0.2}\frac{d}{dz}\left(\frac{zz^kz^{-1}}{(z+0.2)(z-0.2)^2}(z-0.2)^2\right)=\hfill\\
+	\lim_{z\to 0.2}\left(\frac{z^k}{z+0.2}\right)^\prime=\lim_{z\to 0.2}\frac{kz^{k-1}(z+0.2)-z^k}{(z+0.2)^2}=\frac{k(0.2)^{k-1}(0.2+0.2)-(0.2)^k}{(0.2+0.2)^2}=\hfill\\
+	=\frac{0.4k(0.2)^{k-1}-(0.2)^k}{0.16}=2.5k(0.2)^{k-1}-6.25(0.2)^k\hfill
+\end{multline*}
+\begin{multline*}
+	\mathop{\mathrm{res}}\left[\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}z^{k-1}\right]_{z=-0.2} = \frac{1}{(1-1)!} \lim_{z\to -0.2}\frac{d^{(0)}}{dz^{(0)}}\left(\frac{zz^kz^{-1}}{(z+0.2)(z-0.2)^2}(z+0.2)\right)=\hfill\\
+	\lim_{z\to -0.2}\frac{z^k}{(z-0.2)^2}=\frac{(-0.2)^k}{(-0.4)^2}=6.25(-0.2)^k\hfill
+\end{multline*}
+\begin{multline*}
+	Z^{-1}\left\{\displaystyle\frac{z}{(z+0.2)(z-0.2)^2}\right\} = 2.5k(0.2)^{k-1}-6.25(0.2)^k + 6.25(-0.2)^k\hfill
+\end{multline*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent 3) Jaká je poèáteèní a koneèná hodnota pøechodové charakteristiky spojité funkce zadané operátorovým pøenosem $\displaystyle\frac{p+1}{p+2}$:
+
+Øešení:\\
+\begin{multline*}
+	Y(p)=F(p)U(p)=\frac{p+1}{p+2}\frac{1}{p}\hfill
+\end{multline*}
+\begin{multline*}
+	\lim_{p\to \infty}p\frac{p+1}{p+2}\frac{1}{p}=\lim_{p\to \infty}\frac{1+\frac{1}{p}}{1+\frac{2}{p}}=\frac{1+0}{1+0}=\underline{\underline{1}}\hfill
+\end{multline*}
+\begin{multline*}
+	\lim_{p\to 0}p\frac{p+1}{p+2}\frac{1}{p}=\frac{0+1}{0+2}=\underline{\underline{\frac{1}{2}}}\hfill
+\end{multline*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\noindent 4) Jaká je poèáteèní a koneèná hodnota pøechodové charakteristiky diskrétní funkce zadané operátorovým pøenosem $\displaystyle\frac{3z}{z^2-1.5z+0.56}$:
+
+Øešení:\\
+\begin{multline*}
+	Y(z)=F(z)U(z)=\frac{3z}{z^2-1.5z+0.56}\frac{z}{z-1}\hfill
+\end{multline*}
+\begin{multline*}
+	\lim_{z\to \infty}\frac{3z}{z^2-1.5z+0.56}\frac{z}{z-1}=\frac{3z^2}{z^3-2.5z^2+2.06z-0.56}=\frac{\frac{3}{z}}{1-\frac{2.5}{z}+\frac{2.06}{z^2}-\frac{0.56}{z^3}}=\frac{0}{1-0+0-0}=\underline{\underline{0}}\hfill
+\end{multline*}
+\begin{multline*}
+	\lim_{z\to 1}\frac{z-1}{z}\frac{3z}{z^2-1.5z+0.56}\frac{z}{z-1}=\lim_{z\to 1}\frac{3z}{z^2-1.5z+0.56}=\frac{3}{1-1.5+0.56}=\frac{3}{0.06}=\underline{\underline{50}}\hfill
+\end{multline*}
+
+\subsection*{Neøešené pøíklady}
+
+1) $\mathcal{L}^{-1}\left\{\displaystyle\frac{p+1}{p+2}\right\}$\\
+
+Výsledky:\\
+\rotatebox{180}{%
+1) $\delta (t)-e^{-2t}$
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%		
+
+\newpage
+
+\section*{Modelování - opakování}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{Mechanické systémy}
+
+Pružina:
+
+\begin{minipage}[t]{.5\textwidth}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-0.5,-1)(4,4)
+		% nodes
+		\pswall{0,0}{-0.5,3}{0,3}		% Wall
+		\pnode(0,1){n1}
+		\pnode(0,2){n2}
+		\pnode(1,1){pl1}
+		\pnode(1,2){pl2}
+		\pnode(3,1){pr1}
+		\pnode(3,2){pr2}
+		\dotnode(3,1.5){pc1}
+		\pnode(4,1.5){pc2}
+		\pnode(4,3){x}
+		% connections
+		\ncline{n1}{pl1}
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl1)(pr1){$k_2$}
+		\ncline{n2}{pl2}
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl2)(pr2){$k_1$}
+		\ncline[linewidth=1.5pt]{pr1}{pr2}
+		\psset{style=Arrow}
+		\ncline[linewidth=1.5pt]{pc1}{pc2}
+		\naput{$F$}
+		\ncangle[angleA=90,angleB=180]{pr2}{x}
+		\naput{$x$}
+	\end{pspicture}}\\
+	Paralelní $\rightarrow$ spoleèná vzdálenost:
+	\begin{align*}
+		k_1x+k_2x=F\\
+		k_{celk} = k_1+k_2
+	\end{align*}
+\end{minipage}%
+\begin{minipage}[t]{.5\textwidth}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-0.5,-1)(7,4)
+		% nodes
+		\pswall{0,0}{-0.5,3}{0,3}		% Wall
+		\pnode(0,1.5){n}
+		\pnode(1,1.5){pl1}
+		\pnode(4,1.5){pl2}
+		\pnode(3,1.5){pr1}
+		\dotnode(6,1.5){pr2}
+		\pnode(7,1.5){pr3}
+		\pnode(4,3){y}
+		\pnode(7,3){x}
+		% connections
+		\ncline{n}{pl1}
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl1)(pr1){$k_1$}
+		\ncline{pr1}{pl2}
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl2)(pr2){$k_2$}
+		\psset{style=Arrow}
+		\ncline[linewidth=1.5pt]{pr2}{pr3}
+		\naput{$F$}
+		\ncangle[angleA=90,angleB=180]{pr1}{y}
+		\naput{$y$}
+		\ncangle[angleA=90,angleB=180]{pr2}{x}
+		\naput{$x$}
+	\end{pspicture}}\\
+	Seriové $\rightarrow$ spoleèná síla:
+	\begin{align*}
+		k_1y = F,\quad k_2(x-y) = F\\
+		k_2\left(x-\frac{F}{k_1}\right) = F\\
+		k_{celk}=\frac{1}{\displaystyle\frac{1}{k_1}+\displaystyle\frac{1}{k_2}}
+	\end{align*}
+\end{minipage}%
+\\
+
+Tlumiè:
+
+\begin{minipage}[t]{.5\textwidth}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-0.5,-1)(4,4)
+		% nodes
+		\pswall{0,0}{-0.5,3}{0,3}		% Wall
+		\pnode(0,0.7){n1}
+		\pnode(0,2.3){n2}
+		\pnode(1,0.7){pl1}
+		\pnode(1,2.3){pl2}
+		\pnode(3,0.7){pr1}
+		\pnode(3,2.3){pr2}
+		\dotnode(3,1.5){pc1}
+		\pnode(4,1.5){pc2}
+		\pnode(4,3){x}
+		% connections
+		\ncline{n1}{pl1}
+		\dashpot[labeloffset=0.8](pl1)(pr1){$b_2$}
+		\ncline{n2}{pl2}
+		\dashpot[labeloffset=0.8](pl2)(pr2){$b_1$}
+		\ncline[linewidth=1.5pt]{pr1}{pr2}
+		\psset{style=Arrow}
+		\ncline[linewidth=1.5pt]{pc1}{pc2}
+		\naput{$F$}
+		\ncangle[angleA=90,angleB=180]{pr2}{x}
+		\naput{$x$}
+	\end{pspicture}}\\
+	Paralelní $\rightarrow$ spoleèná vzdálenost:
+	\begin{align*}
+		b_1\dot{x}+b_2\dot{x}=F\\
+		b_{celk} = b_1+b_2
+	\end{align*}
+\end{minipage}%
+\begin{minipage}[t]{.5\textwidth}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-0.5,-1)(7,4)
+		% nodes
+		\pswall{0,0}{-0.5,3}{0,3}		% Wall
+		\pnode(0,1.5){n}
+		\pnode(1,1.5){pl1}
+		\pnode(4,1.5){pl2}
+		\pnode(3,1.5){pr1}
+		\dotnode(6,1.5){pr2}
+		\pnode(7,1.5){pr3}
+		\pnode(4,3){y}
+		\pnode(7,3){x}
+		% connections
+		\ncline{n}{pl1}
+		\dashpot[labeloffset=0.8](pl1)(pr1){$b_1$}
+		\ncline{pr1}{pl2}
+		\dashpot[labeloffset=0.8](pl2)(pr2){$b_2$}
+		\psset{style=Arrow}
+		\ncline[linewidth=1.5pt]{pr2}{pr3}
+		\naput{$F$}
+		\ncangle[angleA=90,angleB=180]{pr1}{y}
+		\naput{$y$}
+		\ncangle[angleA=90,angleB=180]{pr2}{x}
+		\naput{$x$}
+	\end{pspicture}}\\
+	Seriové $\rightarrow$ spoleèná síla:
+	\begin{align*}
+		b_1\dot{y} = F,\quad b_2(\dot{x}-\dot{y}) = F\\
+		b_2\left(\dot{x}-\frac{F}{b_1}\right) = F\\
+		b_{celk}=\frac{1}{\displaystyle\frac{1}{b_1}+\displaystyle\frac{1}{b_2}}
+	\end{align*}
+\end{minipage}%
+\\
+Pohybová rovnice mechanického systému:
+	\begin{align*}
+		ma&=\sum{F}\\
+		m\ddot{x}&=-b\dot{x}-kx
+	\end{align*}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+\subsection*{Elektrické systémy}
+
+Sériové a paralelní spojení elektrických prvkù jsou základní znalostí, proto zde nejsou uvedeny. Sériovì spojenými elektrickými prvky prochází stejný proud, na paralelnì spojených prvcích je stejné napìtí.
+
+\begin{center}
+\psscalebox{1}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-1,-1)(8,3)
+	% nodes
+	\pnode(0,-0.5){u1}
+	\pnode(0,2.5){u2}
+	\pnode(1,2.5){r1}
+	\pnode(3,2.5){r2}
+	\pnode(4,2.5){l1}
+	\pnode(6,2.5){l2}
+	\pnode(7,-0.5){c1}
+	\pnode(7,2.5){c2}
+	\Ucc[dipolestyle=normal](u1)(u2){$u$}
+	\resistor[intensitylabel=$i$,intensitywidth=3\pslinewidth](r1)(r2){$R$}
+	\coil[dipolestyle=elektor](l1)(l2){$L$}
+	\capacitor(c1)(c2){$C$}
+	% connections
+	\ncline{u2}{r1}
+	\ncline{r2}{l1}
+	\ncline{l2}{c2}
+	\ncline{c1}{u1}
+\end{pspicture}}
+\end{center}
+
+Diferenciální sériového rovnice RLC obvodu:
+	\begin{align*}
+		L\frac{di}{dt}+Ri+\frac{1}{C}\int{i\,dt}=u
+	\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Stavový popis dynamických systémù}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{Øešené pøíklady}
+
+1) Odvoïte stavový popis a operátorový pøenos mechanického systému:\\
+\begin{center}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-1,-1)(13,4)
+		% walls
+		\pswall{0,-0.5}{-0.5,2.5}{0,-0.5}			% no line for left wall
+		\psline[linecolor=black](0,0)(0,2.5)  % custom line for left wall
+		\pswall{0,0}{12.5,-0.5}{12,0}
+		\pswall{12,0}{12.5,2.5}{12,2.5}
+		% nodes
+		\pnode(0,1.5){pl1}
+		\pnode(2,1.5){pr1}
+		\pnode(5,1.5){pl2}
+		\pnode(5,2.25){pl2t}
+		\pnode(5,0.75){pl2b}
+		\pnode(7,2.25){pr2t}
+		\pnode(7,0.75){pr2b}
+		\pnode(7,1.5){pl3}
+		\pnode(10,1.5){pr3}
+		\pnode(12,1.5){n2}
+		\pnode(1,3.5){u1}
+		\pnode(2,2.25){u2}
+		\pnode(6,3.5){x1}
+		\pnode(11,3.5){x2}
+		% wheels
+		\cnode(2.5,0.25){0.25}{wh1}
+		\cnode(4.5,0.25){0.25}{wh2}
+		\cnode(7.5,0.25){0.25}{wh1}
+		\cnode(9.5,0.25){0.25}{wh2}
+		% carts
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl1)(pr1){$k_1$}
+		\psframe(!\psGetNodeCenter{pr1} pr1.x pr1.y 1 sub)(!\psGetNodeCenter{pl2} pl2.x pl2.y 1 add) 	% y0 is below origin node, y1 is above target node
+		\rput(!\psGetNodeCenter{pr1} pr1.x 1.5 add pr1.y){$m_1$}																					 	% label right to y0
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pl2t)(pr2t){$k_2$}
+		\dashpot[labeloffset=0.8](pl2b)(pr2b){$b$}
+		\psframe(!\psGetNodeCenter{pl3} pl3.x pl3.y 1 sub)(!\psGetNodeCenter{pr3} pr3.x pr3.y 1 add) 	% y0 is below origin node, y1 is above target node
+		\rput(!\psGetNodeCenter{pl3} pl3.x 1.5 add pl3.y){$m_2$}																					 	% label right to y0
+		\resistor[dipolestyle=zigzag,labeloffset=0.5](pr3)(n2){$k_3$}
+		% lines
+
+		% arrows
+		\psset{style=Arrow}
+		\ncangle[angleA=90,angleB=180]{pl2}{x1}
+		\naput{$y_1$}
+		\ncangle[angleA=90,angleB=180]{pr3}{x2}
+		\naput{$y_2$}
+		\ncangle[angleA=-90,angleB=180,linewidth=1.5pt]{u1}{u2}
+		\naput{$u$}
+	\end{pspicture}}
+\end{center}
+
+\noindent \underline{Øešení}:\\
+Diferenciální rovnice:
+\begin{align*}
+	m_1\ddot{y}_1 &= -k_1y_1 - k_2(y_1-y_2) -b(\dot{y}_1-\dot{y}_2) + u\\
+	m_2\ddot{y}_2 &= -k_3y_2 - k_2(y_2-y_1) -b(\dot{y}_2-\dot{y}_1)
+\end{align*}
+Volba stavových velièin:
+\begin{align*}
+	x_1 &= y_1,\quad	x_3 = y_2\\
+	x_2 &= \dot{y}_1,\quad	x_4 = \dot{y}_2\\
+	y &= \begin{bmatrix}x_1\\x_3\end{bmatrix}
+\end{align*}
+Stavový popis z diferenciální rovnice:
+\begin{align*}
+	\dot{x}_1 &= x_2\\
+	m_1\dot{x}_2 &= -k_1x_1 - k_2(x_1-x_3) - b(x_2-x_4) + u\\
+	\dot{x}_3 &= x_4\\
+	m_2\dot{x}_4 &= -k_3x_3 - k_2(x_3-x_1) - b(x_4-x_2)\\
+	y_1 &= x_1\\
+	y_2 &= x_3
+\end{align*}
+
+Úprava na koneèný tvar
+
+\begin{equation*}
+\begin{array}{lrrrrrr}
+	\dot{x}_1 &=& & x_2 & & &\\
+	\dot{x}_2 &=& -\frac{k_1+k_2}{m_1}x_1 &- \frac{b}{m_1}x_2 &+\frac{k_2}{m_1}x_3 &+ \frac{b}{m_1}x_4 &+ \frac{1}{m_1}u\\
+	\dot{x}_3 &=& & & &x_4&\\
+	\dot{x}_4 &=& \frac{k_2}{m_2}x_1 &+ \frac{b}{m_2}x_2 &- \frac{k_2+k_3}{m_2}x_3 &+\frac{b}{m_2}x_4&\\
+	y_1 &=& x_1& & & &\\
+	y_2 &=& & & x_3& &
+\end{array}
+\end{equation*}
+
+Systémové matice:
+\begin{align*}
+	A &= \begin{bmatrix}	0 & 1 & 0 & 0\\
+											-\frac{k_1+k_2}{m_1} & -\frac{b}{m_1} & \frac{k_2}{m_1} & \frac{b}{m_1}\\
+											0 & 0 & 1 & 0\\
+											\frac{k_2}{m_2} & \frac{b}{m_2} & -\frac{k_2+k_3}{m_2} & \frac{b}{m_2} \end{bmatrix} 
+	&B = \begin{bmatrix} 0\\\frac{1}{m_1}\\0\\0\\ \end{bmatrix}\\
+	C &= \begin{bmatrix} 1 & 0 & 0 & 0\\
+											 0 & 0 & 1 & 0 \end{bmatrix}
+	&D = \begin{bmatrix} 0 \\
+											 0 \end{bmatrix}
+\end{align*}
+
+Pøenos pøímo z diferenciální rovnice:\\
+Pùvodní diferenciální rovnici je vhodné upravit na tvar
+\begin{align*}
+	m_1\ddot{y}_1 + b\dot{y}_1 + (k_1+k_2)y_1 = b\dot{y}_2 + k_2y_2 + u\\
+	m_2\ddot{y}_2 + b\dot{y}_2 + (k_2+k_3)y_2 = b\dot{y}_1 + k_2y_1
+\end{align*}
+Aplikováním Laplaceovy transformace na dvojici diferenciálních rovnic vznikne
+\begin{align*}
+	[m_1p^2 + bp + (k_1+k_2)]Y_1(p) &= (bp+k_2)Y_2(p) + U(p)\\
+	[m_2p^2 + bp + (k_2+k_3)]Y_2(p) &= (bp+k_2)Y_1(p)
+\end{align*}
+Vyøešením druhé rovnice pro $Y_2$ a dosazením do první rovnice vznikne rovnice pro první výstup
+\begin{align*}
+	[(m_1p^2&+bp+k_1+k_2)(m_2p^2+bp+k_2+k_3)-(bp+k_2)^2]Y_1(p)\\
+	&= (m_2p^2+bp+k_2+k_3)U(p)
+\end{align*}
+Zbývá spoèítat podíl výstupní velièiny ku vstupní - pøenos ze vstupu na výstup 1
+\begin{align*}
+	\frac{Y_1(p)}{U(p)}=\frac{m_2p^2+bp+k_2+k_3}{(m_1p^2+bp+k_1+k_2)(m_2p^2+bp+k_2+k_3)-(bp+k_2)^2}
+\end{align*}
+Vyøešením první rovnice pro $Y_1$ a dosazením do druhé rovnice lze stejným postupem získat pøenos ze vstupu na výstup 2
+\begin{align*}
+	\frac{Y_2(p)}{U(p)}=\frac{bp+k_2}{(m_1p^2+bp+k_1+k_2)(m_2p^2+bp+k_2+k_3)-(bp+k_2)^2}
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+2) \textbf{Mechanická rezonance} - Vypoèítejte operátorový pøenos zadaného mechanického systému. Z operátorového pøenosu vypoèítejte rezonanèní frekvenci systému. Vypoèítejte Laplaceùv obraz výstupu systému buzeného sinusovým signálem o frekvenci rovné rezonanèní frekvenci.\\
+
+\begin{center}
+	\psscalebox{0.8}{\begin{pspicture}[showgrid=false,linewidth=0.5pt](-2,-2)(3,3)
+		% nodes
+		\pnode(0,2){m1ref}
+		\pnode(-0.75,2){r1}
+		\pnode(-0.75,0){r2}
+		\pnode(0.75,2){d1}
+	
+		\pnode(0.75,0){d2}
+		\pnode(0,0){u1ref}
+		\dotnode(0,-2){uin}
+		\pnode(0.75,-1.25){uend}
+		\pnode(1,2){yin}
+		\pnode(1.5,2.75){yout}
+		% shapes
+		\resistor[dipolestyle=zigzag,labeloffset=-0.5](r1)(r2){$k$}
+		\psframe(!\psGetNodeCenter{m1ref} m1ref.x 1 sub m1ref.y)(!\psGetNodeCenter{m1ref} m1ref.x 1 add m1ref.y 1 add) 	% y0 is below origin node, y1 is above target node
+		\rput(!\psGetNodeCenter{m1ref} m1ref.x m1ref.y 0.5 add){$m$}																					 	% label right to y0
+		\dashpot[labeloffset=0.8](d1)(d2){$b$}
+		\ncline{r2}{d2}
+		\ncline{uin}{u1ref}
+		\pscurve[linecolor=green](-1.5,-2)(-1.25,-2.25)(-0.75,-1.75)(-0.25,-2.25)(0.25,-1.75)(0.75,-2.25)(1,-2)
+		% lines
+		\psset{style=Arrow}
+		\ncangle[angleB=-90]{yin}{yout}
+		\nbput{$y$}
+		\ncangle[angleB=-90]{uin}{uend}
+		\nbput{$u$}
+	\end{pspicture}}
+\end{center}
+
+\begin{align*}
+	m = 2,\quad
+	k = 0.1,\quad
+	b = 0.05
+\end{align*}
+
+\noindent \underline{Øešení}:\\
+Diferenciální rovnice:
+\begin{align*}
+	m\ddot{y} 								&= -k(y-u) -b(\dot{y}-\dot{u})\\
+	m\ddot{y} + b\dot{y} + ky &= b\dot{u} + ku\\
+	(mp^2+bp+k)Y(p) 					&= (bp+k)U(p)\\
+	\frac{Y(p)}{U(p)} 				&= \frac{bp+k}{mp^2+bp+k}\\
+	F(p) 											&= \displaystyle\frac{\frac{b}{m}p+\frac{k}{m}}{p^2+\frac{b}{m}p+\frac{k}{m}}
+\end{align*}
+
+Rezonanèní frekvence:\\
+Pro výpoèet rezonanèní frekvence lze zvolit dva rùzné postupy. První postup spoèívá ve výpoètu zpìtné Laplaceovy transformace operátorového pøenosu zadaného systému. To se na první pohled mùže jevit složitì, ale celý postup lze zjednodušit zanedbáním tlumení:
+
+\begin{align*}
+	F(p) 											&= \displaystyle\frac{\frac{k}{m}}{p^2+\frac{k}{m}}
+\end{align*}
+
+Ze slovníku Laplaceovy transformace je patrné, že se zjednodušený systém podobá obrazu funkce $\mathrm{sin}\omega t$. Jediný rozdíl je v zesílení soustavy, které není pro výpoèet rezonanèní frekvence dùležité.
+
+\begin{align*}
+	\mathfrak{L}^{-1}\left\{\displaystyle\frac{\sqrt{\frac{k}{m}}\sqrt{\frac{k}{m}}}{p^2+\frac{k}{m}}\right\} = \mathfrak{L}^{-1}\left\{\displaystyle\frac{A\omega}{p^2+\omega^2}\right\} = \sqrt{\frac{k}{m}}\,\mathrm{sin}\sqrt{\frac{k}{m}} t
+\end{align*}
+
+Rezonanèní frekvence je tedy $\omega_r=\sqrt{\frac{k}{m}}$
+
+Odezva na sinusový vstupní signál:
+
+\begin{align*}
+	Y(p) &= F(p)U(p)\\
+	Y(p) &= \left(\displaystyle\frac{\frac{b}{m}p+\frac{k}{m}}{p^2+\frac{b}{m}p+\frac{k}{m}}\right)\left(\frac{\sqrt{\frac{k}{m}}}{p^2+\frac{k}{m}}\right)
+\end{align*}
+
+Druhý postup získání rezonanèní frekvence spoèívá v rozkladu frekvenèního pøenosu systému na reálnou a imaginární èást. Pokud položíme reálnou èást nule, jsme schopni získat rezonanèní frekvenci jako øešení této rovnice.
+
+
+
+3) \textbf{Pøechod od stavového popisu na operátorový pøenos} - Vypoèítejte operátorový pøenos systému zadaného pomocí diferenciální rovnice:
+
+\begin{align*}
+	\dot{x}_1(t) &= -x_2(t) + u(t)\\
+	\dot{x}_2(t) &= -3x_1(t) -2x_2(t)\\
+	y &= x_1
+\end{align*}
+
+Pøechod na operátorový pøenos se bude øešit pomocí maticové algebry:
+
+\begin{align*}
+	pX(p) &= \begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}X(p) + \begin{pmatrix}1\\0\end{pmatrix}U(p)\\
+	Y(p) &= \begin{pmatrix}1\\0\end{pmatrix}X(p)
+\end{align*}
+
+Z první rovnice se získá $X(p)$:
+
+\begin{align*}
+	pX(p) -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}X(p) &= \begin{pmatrix}1\\0\end{pmatrix}U(p)\\
+	\begin{bmatrix}pI -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}\end{bmatrix}X(p) &= \begin{pmatrix}1\\0\end{pmatrix}U(p)
+\end{align*}
+
+Násobení (\textbf{zleva}) inverzí hranaté závorky:
+
+\begin{align*}
+	X(p) &= \begin{bmatrix}pI -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}\end{bmatrix}^{-1}\begin{pmatrix}1\\0\end{pmatrix}U(p)
+\end{align*}
+
+Dosazení $X(p)$ do rovnice obrazu výstupu $Y(p)$:
+
+\begin{align*}
+	Y(p) &= \begin{pmatrix}1 & 0\end{pmatrix}\begin{bmatrix}pI -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}\end{bmatrix}^{-1}\begin{pmatrix}1\\0\end{pmatrix}U(p)\\
+	\frac{Y(p)}{U(p)} &= \begin{pmatrix}1 & 0\end{pmatrix}\begin{bmatrix}pI -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}\end{bmatrix}^{-1}\begin{pmatrix}1\\0\end{pmatrix}
+\end{align*}
+
+\textbf{Numerické øešení}, nejdøíve inverze hranaté závorky:
+
+\begin{multline*}
+	\begin{bmatrix}pI -\begin{pmatrix}0 & -1\\ -3 & -2\end{pmatrix}\end{bmatrix}^{-1} = \frac{1}{\mathrm{det}\begin{pmatrix}p & 1\\ 3 & p+2\end{pmatrix}}\mathrm{adj}\begin{pmatrix}p & 1\\ 3 & p+2\end{pmatrix}=\frac{1}{p^2+2p-3}\begin{pmatrix}p+2 & -1\\ -3 & p\end{pmatrix}\hfill\\
+	= \begin{pmatrix}\displaystyle\frac{p+2}{p^2+2p-3} & -\displaystyle\frac{1}{p^2+2p-3}\\ -\displaystyle\frac{3}{p^2+2p-3} & \displaystyle\frac{p}{p^2+2p-3} \end{pmatrix}\hfill
+\end{multline*}	
+	
+Násobení vstupní a výstupní maticí:
+
+\begin{multline*}
+	\begin{pmatrix}1 & 0\end{pmatrix}\begin{pmatrix}\displaystyle\frac{p+2}{p^2+2p-3} & -\displaystyle\frac{1}{p^2+2p-3}\\ -\displaystyle\frac{3}{p^2+2p-3} & \displaystyle\frac{p}{p^2+2p-3} \end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}=\begin{pmatrix}\displaystyle\frac{p+2}{p^2+2p-3} & -\displaystyle\frac{1}{p^2+2p-3}\end{pmatrix}\begin{pmatrix}1\\0\end{pmatrix}\hfill\\
+	=\underline{\underline{\frac{p+2}{p^2+2p-3}}}\hfill
+\end{multline*}	
+
+
+	
+\end{document}
